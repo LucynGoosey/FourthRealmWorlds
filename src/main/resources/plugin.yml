@@ -1,0 +1,4 @@
+name: FourthRealmWorlds
+version: '${project.version}'
+main: me.lucyn.fourthrealm.FourthRealmWorlds
+api-version: '1.20'
