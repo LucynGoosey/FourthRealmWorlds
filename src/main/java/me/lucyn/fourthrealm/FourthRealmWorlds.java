@@ -1,5 +1,7 @@
 package me.lucyn.fourthrealm;
 
+import me.lucyn.fourthrealm.listeners.BedListener;
+import me.lucyn.fourthrealm.listeners.DeathListener;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,7 +11,7 @@ import java.util.List;
 public final class FourthRealmWorlds extends JavaPlugin {
 
     public static FourthRealmCore fourthRealmCore;
-    public static List<World> worlds;
+    public List<World> worlds;
 
     @Override
     public void onEnable() {
@@ -25,6 +27,8 @@ public final class FourthRealmWorlds extends JavaPlugin {
             }
         }
 
+        getServer().getPluginManager().registerEvents(new BedListener(fourthRealmCore), this);
+        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
 
 
 
