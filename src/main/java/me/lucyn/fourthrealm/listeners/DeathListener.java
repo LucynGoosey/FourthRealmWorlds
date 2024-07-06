@@ -28,7 +28,7 @@ public class DeathListener implements Listener {
 
             int index = fourthRealmWorlds.worlds.indexOf(realmPlayer.currentLivingWorld);
 
-            if(index > fourthRealmWorlds.worlds.size()) {
+            if(index >= fourthRealmWorlds.worlds.size()) {
                 index = 0;
             } else {
                 index++;
@@ -43,6 +43,5 @@ public class DeathListener implements Listener {
         }
 
     }
-
 
 }
