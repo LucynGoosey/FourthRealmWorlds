@@ -22,6 +22,7 @@ public class BedListener implements Listener {
             fourthRealmCore.setPlayerData(player);
 
 
+
         }
 
     }
