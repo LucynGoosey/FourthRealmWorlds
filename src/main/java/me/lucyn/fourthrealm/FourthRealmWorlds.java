@@ -27,6 +27,15 @@ public final class FourthRealmWorlds extends JavaPlugin {
             }
         }
 
+
+
+        for(int i = 0; i < 4; i++ ) {
+            getLogger().info(i + " - " + worlds.get(i).getName());
+        }
+
+
+        getLogger().info(worlds.size() + " worlds loaded");
+
         getServer().getPluginManager().registerEvents(new BedListener(fourthRealmCore), this);
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
 
