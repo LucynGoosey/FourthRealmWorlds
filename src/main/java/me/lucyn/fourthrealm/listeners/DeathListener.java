@@ -72,12 +72,14 @@ public class DeathListener implements Listener {
 
                     }
                     bar.setTitle(String.valueOf(i / 60) + ":" + s);
+                } else {
+                    bar.setTitle(String.valueOf(i));
                 }
 
 
-                bar.setTitle(String.valueOf(i));
 
-                if(i == 0) {
+
+                if(i == -1) {
                     rotateWorld(event.getPlayer());
                     bar.removePlayer(event.getPlayer());
                     Bukkit.removeBossBar(key);
