@@ -12,6 +12,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -26,7 +27,7 @@ public class DeathListener implements Listener {
 
     private final FourthRealmWorlds fourthRealmWorlds;
 
-    private int seconds = 120;
+    private int seconds = 15;
 
     public DeathListener(FourthRealmWorlds fourthRealmWorlds) {
         this.fourthRealmWorlds = fourthRealmWorlds;
@@ -52,19 +53,18 @@ public class DeathListener implements Listener {
             @Override
             public void run() {
 
-                if(i < 0) {
+                if(i <= 0) {
 
                     if(!event.getPlayer().isOnline()) {
                         PlayerDataHandler playerDataHandler = fourthRealmCore.getPlayerDataHandler();
                         playerDataHandler.loadPlayerData(event.getPlayer());
                         ((FourthRealmCore) Bukkit.getPluginManager().getPlugin("FourthRealmCore")).setPlayerData(fourthRealmCore.getPlayerData(event.getPlayer()).setPurgatoryRespawn(true));
+                        playerDataHandler.savePlayerData(FourthRealmCore.playerData.get(event.getPlayer()));
                         FourthRealmCore.playerData.remove(event.getPlayer());
-                        bar.removePlayer(event.getPlayer());
-                        Bukkit.removeBossBar(key);
-                        cancel();
-                    }
+                    } else {
 
-                    rotateWorld(event.getPlayer());
+                        rotateWorld(event.getPlayer());
+                    }
                     bar.removePlayer(event.getPlayer());
                     Bukkit.removeBossBar(key);
                     cancel();
@@ -72,13 +72,16 @@ public class DeathListener implements Listener {
                 }
                 i--;
 
-                bar.setProgress((double) i / seconds);
+                if(!(((double) i / seconds) < 0.0)) {
+                    bar.setProgress((double) i / seconds);
+                }
+
 
                 if(i >= 60) {
                     String ss;
                     int s = i % 60;
                     if(s < 10) {
-                        ss = "0" + String.valueOf(s);
+                        ss = "0" + s;
                     } else {
                         ss = String.valueOf(s);
 
@@ -118,14 +121,20 @@ public class DeathListener implements Listener {
         realmPlayer.currentLivingWorld = player.getWorld();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onJoin(PlayerJoinEvent event) {
 
-        RealmPlayer realmPlayer = fourthRealmCore.getPlayerData(event.getPlayer());
-        if(realmPlayer.purgatoryRespawn) {
-            rotateWorld(event.getPlayer());
-            realmPlayer.purgatoryRespawn = false;
-        }
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                RealmPlayer realmPlayer = fourthRealmCore.getPlayerData(event.getPlayer());
+                if(realmPlayer.purgatoryRespawn) {
+                    rotateWorld(event.getPlayer());
+                    realmPlayer.purgatoryRespawn = false;
+                }
+            }
+        }.runTaskLater(fourthRealmWorlds, 20);
 
     }
 
