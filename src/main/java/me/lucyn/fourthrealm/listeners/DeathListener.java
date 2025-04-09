@@ -3,6 +3,7 @@ package me.lucyn.fourthrealm.listeners;
 import me.lucyn.fourthrealm.FourthRealmCore;
 import me.lucyn.fourthrealm.FourthRealmWorlds;
 import me.lucyn.fourthrealm.RealmPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -24,7 +25,6 @@ public class DeathListener implements Listener {
 
 
     //TODO: handle players disconnecting while in purgatory
-    //add
 
 
 
@@ -63,17 +63,26 @@ public class DeathListener implements Listener {
                 bar.setProgress((double) i / seconds);
 
                 if(i >= 60) {
-                    bar.setTitle(String.valueOf(i / 60) + ":" + String.valueOf(i % 60));
+                    String ss;
+                    int s = i % 60;
+                    if(s < 10) {
+                        ss = "0" + String.valueOf(s);
+                    } else {
+                        ss = String.valueOf(s);
+
+                    }
+                    bar.setTitle(String.valueOf(i / 60) + ":" + s);
                 }
 
 
                 bar.setTitle(String.valueOf(i));
 
                 if(i == 0) {
-                    rotateWorld(event);
+                    rotateWorld(event.getPlayer());
                     bar.removePlayer(event.getPlayer());
-                    fourthRealmWorlds.getServer().removeBossBar(key);
+                    Bukkit.removeBossBar(key);
                     cancel();
+
 
                 }
 
@@ -95,8 +104,8 @@ public class DeathListener implements Listener {
     }
     //this will have to be reworked to not use the respawn event, as they'll be respawning in purgatory and then teleported to the correct spot.
 
-    public void rotateWorld(PlayerRespawnEvent event) {
-        RealmPlayer realmPlayer = fourthRealmCore.getPlayerData(event.getPlayer());
+    public void rotateWorld(Player player) {
+        RealmPlayer realmPlayer = fourthRealmCore.getPlayerData(player);
 
         int index = fourthRealmWorlds.worlds.indexOf(realmPlayer.currentLivingWorld);
         //fourthRealmWorlds.getLogger().info("current world: " + index); //debugging stuff
@@ -111,14 +120,14 @@ public class DeathListener implements Listener {
         }
         if(realmPlayer.beds.containsKey(fourthRealmWorlds.worlds.get(index)) && realmPlayer.beds.get(fourthRealmWorlds.worlds.get(index)).getBlock().getBlockData() instanceof org.bukkit.block.data.type.Bed) {
 
-            event.getPlayer().teleport(realmPlayer.beds.get(fourthRealmWorlds.worlds.get(index)));
+            player.teleport(realmPlayer.beds.get(fourthRealmWorlds.worlds.get(index)));
 
         } else {
-            event.getPlayer().teleport(fourthRealmWorlds.worlds.get(index).getSpawnLocation());
+            player.teleport(fourthRealmWorlds.worlds.get(index).getSpawnLocation());
         }
         //fourthRealmWorlds.getLogger().info("respawning player in next world: " + fourthRealmWorlds.worlds.indexOf(event.getRespawnLocation().getWorld()));
 
-        realmPlayer.currentLivingWorld = event.getPlayer().getWorld();
+        realmPlayer.currentLivingWorld = player.getWorld();
 
 
 
